@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wardrobe AI — Personal Stylist</title>
+<style>
+:root{--bg:#f7f5f1;--card:#fff;--ink:#1f1f1c;--muted:#77746d;--line:#e7e3dc;--accent:#1f1f1c;--soft:#efebe4}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:22px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}.brand{font-weight:800;letter-spacing:-.5px;font-size:22px}.brand span{color:#9a8b78}.pill{background:#fff;border:1px solid var(--line);padding:10px 15px;border-radius:99px;font-size:13px}
+.hero{background:#20201d;color:white;border-radius:28px;padding:38px;display:grid;grid-template-columns:1.2fr .8fr;gap:30px;overflow:hidden;position:relative}.hero h1{font-size:52px;line-height:.98;letter-spacing:-2.5px;margin:0 0 18px;max-width:600px}.hero p{color:#c9c7c0;max-width:560px;line-height:1.6}.hero .cta{margin-top:18px;background:white;color:#191917;border:0;padding:14px 20px;border-radius:14px;font-weight:750}.mirror{min-height:250px;border-radius:22px;background:linear-gradient(145deg,#d8d0c3,#8f887e);display:flex;align-items:end;justify-content:center;padding:20px;box-shadow:inset 0 0 60px #0002}.silhouette{width:150px;height:210px;border-radius:70px 70px 30px 30px;background:#eee9e1aa;filter:blur(.2px)}
+.tabs{display:flex;gap:8px;margin:24px 0;overflow:auto}.tab{border:1px solid var(--line);background:transparent;border-radius:99px;padding:10px 15px;white-space:nowrap}.tab.active{background:var(--ink);color:white}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.panel{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px}.panel h2{margin:0 0 5px;font-size:20px}.sub{color:var(--muted);font-size:13px;margin-bottom:18px}.controls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.field{background:var(--soft);border-radius:14px;padding:10px 12px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}.field select{width:100%;border:0;background:transparent;outline:0;color:var(--ink)}
+.generate{grid-column:1/-1;background:var(--ink);color:#fff;border:0;padding:14px;border-radius:14px;font-weight:750}
+.outfit{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.item{background:#f4f1eb;border-radius:16px;overflow:hidden}.photo{height:150px;display:flex;align-items:center;justify-content:center;font-size:48px;background:linear-gradient(145deg,#eee9df,#d8d0c3)}.item p{margin:10px;font-size:12px;font-weight:700}.item small{display:block;margin:-5px 10px 10px;color:var(--muted)}
+.wardrobe{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.cloth{border:1px solid var(--line);border-radius:16px;padding:10px;background:#fff}.cloth .photo{height:125px}.cloth strong{display:block;margin-top:8px;font-size:13px}.cloth button{border:0;background:transparent;color:#a33;font-size:11px;padding:6px 0}
+.drop{border:2px dashed #d7d1c7;border-radius:18px;padding:24px;text-align:center;color:var(--muted);margin-top:15px}.drop input{display:none}.drop label{display:inline-block;background:var(--ink);color:white;padding:10px 14px;border-radius:12px;margin-top:8px;cursor:pointer}
+.message{margin-top:14px;background:#f0eee9;border-radius:14px;padding:13px;font-size:13px;line-height:1.5}
+@media(max-width:800px){.hero,.grid{grid-template-columns:1fr}.hero h1{font-size:42px}.wardrobe{grid-template-columns:repeat(2,1fr)}.outfit{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="brand">WARDROBE<span>AI</span></div><button class="pill" onclick="demo()">✨ AI Stylist</button></header>
+
+<section class="hero">
+<div><div style="font-size:12px;color:#aaa;margin-bottom:12px">YOUR DIGITAL CLOSET</div><h1>Get dressed without overthinking it.</h1><p>Upload what you own. Tell your personal stylist where you're going, when you're going, and the vibe you want. Get a complete outfit built from your wardrobe.</p><button class="cta" onclick="document.getElementById('styler').scrollIntoView({behavior:'smooth'})">Style my outfit →</button></div>
+<div class="mirror"><div class="silhouette"></div></div>
+</section>
+
+<div class="tabs"><button class="tab active" onclick="show('styler',this)">AI Stylist</button><button class="tab" onclick="show('closet',this)">My Closet</button></div>
+
+<div id="styler" class="grid">
+<section class="panel">
+<h2>Personal stylist</h2><div class="sub">Choose the situation. Your wardrobe does the rest.</div>
+<div class="controls">
+<div class="field"><label>OCCASION</label><select id="occasion"><option>College</option><option>Casual outing</option><option>Date</option><option>Dinner</option><option>Party</option><option>Travel</option><option>Formal</option></select></div>
+<div class="field"><label>TIME</label><select id="time"><option>Day</option><option>Evening</option><option>Night</option></select></div>
+<div class="field"><label>VIBE</label><select id="vibe"><option>Clean & classy</option><option>Casual</option><option>Smart casual</option><option>Streetwear</option><option>Minimal</option></select></div>
+<div class="field"><label>COLOUR MOOD</label><select id="colour"><option>Neutrals</option><option>Any colour</option><option>Earth tones</option><option>Monochrome</option></select></div>
+<button class="generate" onclick="generate()">✨ Generate my outfit</button>
+</div>
+<div id="advice" class="message">Tip: add more real clothes in <b>My Closet</b> for better recommendations.</div>
+</section>
+
+<section class="panel">
+<h2 id="lookTitle">Today's look</h2><div class="sub">A complete head-to-toe combination</div>
+<div id="outfit" class="outfit"></div>
+</section>
+</div>
+
+<section id="closet" class="panel" style="margin-top:20px">
+<h2>My Closet</h2><div class="sub">Add photos of your actual clothes. They stay in this browser on this device.</div>
+<div class="drop"><div style="font-size:28px">＋</div><div>Upload clothing photos</div><label>Choose photos<input id="files" type="file" accept="image/*" multiple onchange="addPhotos(event)"></label></div>
+<div id="wardrobe" class="wardrobe" style="margin-top:18px"></div>
+</section>
+</div>
+
+<script>
+let clothes=JSON.parse(localStorage.getItem('wardrobeAI')||'[]');
+const starter=[
+ {name:'White oversized shirt',emoji:'👔',cat:'Top'}, {name:'Black straight trousers',emoji:'👖',cat:'Bottom'},
+ {name:'Beige relaxed trousers',emoji:'👖',cat:'Bottom'}, {name:'White sneakers',emoji:'👟',cat:'Shoes'},
+ {name:'Black polo',emoji:'👕',cat:'Top'}, {name:'Blue denim',emoji:'👖',cat:'Bottom'},
+ {name:'Silver watch',emoji:'⌚',cat:'Accessory'}, {name:'Black overshirt',emoji:'🧥',cat:'Outerwear'}
+];
+// Load saved wardrobe after the page is ready.
+if(!clothes.length){ clothes=starter; }
+// More reliable wardrobe storage: images are compressed before saving.
+// This prevents large phone photos from hitting browser localStorage limits
+// and fixes multi-photo uploads being lost.
+const DB_NAME='WardrobeAI_DB', STORE='items';
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=()=>{ if(!req.result.objectStoreNames.contains(STORE)) req.result.createObjectStore(STORE,{keyPath:'id',autoIncrement:true}); };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function save(){
+  try{
+    const db=await openDB();
+    const tx=db.transaction(STORE,'readwrite'), store=tx.objectStore(STORE);
+    store.clear();
+    clothes.forEach(x=>store.add(x));
+    await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});
+    localStorage.setItem('wardrobeAI_meta','1');
+  }catch(err){
+    // Small fallback for browsers where IndexedDB is unavailable.
+    try{ localStorage.setItem('wardrobeAI',JSON.stringify(clothes)); }catch(e){}
+  }
+}
+async function loadWardrobe(){
+  try{
+    const db=await openDB();
+    const rows=await new Promise((resolve,reject)=>{
+      const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();
+      req.onsuccess=()=>resolve(req.result||[]);
+      req.onerror=()=>reject(req.error);
+    });
+    if(rows.length){ clothes=rows; }
+    else {
+      const old=localStorage.getItem('wardrobeAI');
+      if(old) clothes=JSON.parse(old);
+      else { clothes=starter; await save(); }
+    }
+  }catch(err){
+    const old=localStorage.getItem('wardrobeAI');
+    clothes=old?JSON.parse(old):starter;
+  }
+  render(); generate();
+}
+function render(){
+  document.getElementById('wardrobe').innerHTML=clothes.map((x,i)=>`<div class="cloth"><div class="photo">${x.img?`<img src="${x.img}" style="width:100%;height:100%;object-fit:contain">`:x.emoji||'👕'}</div><strong>${x.name}</strong><button onclick="removeItem(${i})">Remove</button></div>`).join('');
+}
+async function removeItem(i){
+  clothes.splice(i,1);
+  await save(); render(); generate();
+}
+function compressImage(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=900, scale=Math.min(1,max/Math.max(img.width,img.height));
+        const c=document.createElement('canvas');
+        c.width=Math.max(1,Math.round(img.width*scale));
+        c.height=Math.max(1,Math.round(img.height*scale));
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        resolve(c.toDataURL('image/jpeg',0.78));
+      };
+      img.onerror=reject; img.src=reader.result;
+    };
+    reader.onerror=reject; reader.readAsDataURL(file);
+  });
+}
+async function addPhotos(e){
+  const files=[...e.target.files];
+  if(!files.length) return;
+  const status=document.querySelector('.drop');
+  const original=status.innerHTML;
+  status.innerHTML='<b>Adding your clothes…</b><div style="margin-top:6px;font-size:12px">Processing '+files.length+' photo'+(files.length>1?'s':'')+'. Please wait.</div>';
+  let added=0;
+  for(const f of files){
+    if(!f.type.startsWith('image/')) continue;
+    try{
+      const img=await compressImage(f);
+      clothes.push({name:f.name.replace(/\.[^.]+$/,''),img,cat:'Unknown'});
+      added++;
+      status.innerHTML='<b>Adding your clothes…</b><div style="margin-top:6px;font-size:12px">'+added+' of '+files.length+' added</div>';
+    }catch(err){}
+  }
+  await save();
+  render(); generate();
+  status.innerHTML=original;
+  e.target.value='';
+}
+function pick(cat,words){let a=clothes.filter(x=>x.cat===cat||x.cat==='Unknown'||words.some(w=>(x.name||'').toLowerCase().includes(w)));return a[0]||starter.find(x=>x.cat===cat)}
+function generate(){
+ let occ=document.getElementById('occasion').value,time=document.getElementById('time').value,vibe=document.getElementById('vibe').value;
+ let top=pick('Top',['shirt','tee','polo','top']), bottom=pick('Bottom',['trouser','pant','jean','cargo']), shoes=pick('Shoes',['shoe','sneaker','loafer']), acc=pick('Accessory',['watch','glass','belt']);
+ const cards=[['TOP',top],['BOTTOM',bottom],['SHOES',shoes],['FINISHING TOUCH',acc]].filter(x=>x[1]);
+ document.getElementById('lookTitle').textContent=`${occ} · ${time}`;
+ document.getElementById('outfit').innerHTML=cards.map(([label,x])=>`<div class="item"><div class="photo">${x.img?`<img src="${x.img}" style="width:100%;height:100%;object-fit:contain">`:x.emoji||'👕'}</div><p>${x.name}</p><small>${label}</small></div>`).join('');
+ document.getElementById('advice').innerHTML=`<b>Stylist note:</b> For a ${vibe.toLowerCase()} ${occ.toLowerCase()} look, keep the silhouette clean and let one piece be the focus. This demo uses your saved wardrobe first.`;
+}
+function show(id,el){document.getElementById(id).scrollIntoView({behavior:'smooth'});document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));el.classList.add('active')}
+function demo(){generate();document.getElementById('styler').scrollIntoView({behavior:'smooth'})}
+loadWardrobe();
+</script>
+</body>
+</html>
